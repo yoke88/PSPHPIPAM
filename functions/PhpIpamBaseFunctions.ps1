@@ -99,6 +99,9 @@ function Invoke-PhpIpamExecute{
       .PARAMETER $headers
       you can specify you own headers here.
 
+      .PARAMETR $ContentType
+      specify contentype
+
       .EXAMPLE
       invoke-PHPIpamExecute -method get  -controller sections 
 
