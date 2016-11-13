@@ -115,6 +115,7 @@ function Invoke-PhpIpamExecute{
       invoke-PHPIpamExecute -method get  -controller sections -identifiers @(4)
 
   #>
+  [CmdletBinding()]
    param(
         [parameter(mandatory=$true,HelpMessage="Enter the API method")]
         [validateSet("get","put","options","patch","post","delete")]
@@ -133,12 +134,13 @@ function Invoke-PhpIpamExecute{
         $params=@{},
 
         [validateScript({$_ -is [system.collections.hashtable]})]
-        $headers=@{}
+        $headers=@{},
+
+        [Parameter(Mandatory=$false)]$ContentType=$null
 
     )
      # Init Uri
         $uri=""
-
         # lowercase controller
         $controller=$controller.ToLower()
         if($global:phpipamTokenAuth){
@@ -173,7 +175,7 @@ function Invoke-PhpIpamExecute{
             }
 
             try{
-                $r=Invoke-RestMethod -Method $method -Headers $headers  -Uri $uri -Body $params
+                $r=Invoke-RestMethod -Method $method -Headers $headers  -Uri $uri -Body $params -ContentType $ContentType
                 if($r -and $r.success){
                     return $r
                 }
@@ -202,23 +204,23 @@ function Invoke-PhpIpamExecute{
 
                 # no need to build header
                try{
-                    $r=Invoke-RestMethod -Method $method -Headers $headers  -Uri $uri
+                    $r=Invoke-RestMethod -Method $method -Headers $headers  -Uri $uri -ContentType $ContentType
                     if($r -and $r.success){
                         return $r
                     }
                }catch{
                     Write-Error $_.ErrorDetails.message
-                    return $null
+                    return $false
                }
 
             }else{
                 Write-Error "No AppID and AppKey can be used,please use new-PhpIpamSession command first to check and store AppID and AppKey"
-                return $null
+                return $false
             }
          }
          if($global:phpipamTokenAuth -eq $null){
                 Write-Error "No Auth Method exist,please use new-PhpIpamSession command first to specify auth method and infos"
-                return $null
+                return $false
          }
 }
 
