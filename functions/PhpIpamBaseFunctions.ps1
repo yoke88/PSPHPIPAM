@@ -99,8 +99,8 @@ function Invoke-PhpIpamExecute{
       .PARAMETER $headers
       you can specify you own headers here.
 
-      .PARAMETR $ContentType
-      specify contentype
+      .PARAMETER $contentType
+      specify your contenType
 
       .EXAMPLE
       invoke-PHPIpamExecute -method get  -controller sections 
@@ -118,37 +118,45 @@ function Invoke-PhpIpamExecute{
       invoke-PHPIpamExecute -method get  -controller sections -identifiers @(4)
 
   #>
-  [CmdletBinding()]
    param(
         [parameter(mandatory=$true,HelpMessage="Enter the API method")]
         [validateSet("get","put","options","patch","post","delete")]
-        [string]$method,
+        [string]$method="get",
 
         [parameter(mandatory=$true,HelpMessage="Enter the controller (API Endpoint)")]
         [validateSet("sections","subnets","folders","addresses","vlans","l2domains","vfr","tools","prefix")]
         [alias('Endpoint')]
-        [string]$controller,
+        [string]$controller="sections",
 
         [parameter(mandatory=$false,HelpMessage="Enter the identifiers array")]
-        $identifiers=@(),
+        [array]$identifiers=@(),
 
         [parameter(mandatory=$false,HelpMessage="Enter the params hashtable")]
-        [validateScript({$_ -is [system.collections.hashtable]})]
+        [validateScript({$_ -is [hashtable] -or $_ -is [psCustomObject]})]
         $params=@{},
 
-        [validateScript({$_ -is [system.collections.hashtable]})]
+        [validateScript({$_ -is [hashtable]})]
         $headers=@{},
 
-        [Parameter(Mandatory=$false)]$ContentType=$null
+        [parameter(mandatory=$false)]
+        $ContentType=$null
 
     )
      # Init Uri
         $uri=""
+
         # lowercase controller
         $controller=$controller.ToLower()
+        if($params -is [psCustomObject]){
+            $params=$params|ConvertTo-HashtableFromPsCustomObject
+        }
+        
+        Write-Verbose "identifiers$(convertto-json $identifiers)"
         if($global:phpipamTokenAuth){
+            Write-Debug "Using TokenAuth,Test Token Status"
             $ipamstatus=test-PhpIpamToken
             if($ipamstatus -eq 'Expired'){
+                Write-Debug "Token status is Expired"
                 expand-PhpIpamTokenLife -force
             }
 
@@ -176,16 +184,6 @@ function Invoke-PhpIpamExecute{
                     $headers.Add("token",$global:phpipamToken)
                 }
             }
-
-            try{
-                $r=Invoke-RestMethod -Method $method -Headers $headers  -Uri $uri -Body $params -ContentType $ContentType
-                if($r -and $r.success){
-                    return $r
-                }
-            }catch{
-                Write-Error $_.ErrorDetails.message
-                return $null
-            }
         }
 
          if($global:phpipamTokenAuth -eq $false){
@@ -201,30 +199,50 @@ function Invoke-PhpIpamExecute{
                 }
                 $query_hash.Add("controller",$controller)
                 $json_request=$query_hash|ConvertTo-Json -Compress 
+                Write-Verbose "json_request: $(convertto-json $json_request)"
                 $crypt_request=Protect-Rijndael256ECB -Key $Global:PhpipamAppKey -Plaintext $json_request
                 $Encode_Crypt_request=[System.Web.HttpUtility]::UrlEncode($crypt_request)
                 $uri="{0}/?app_id={1}&enc_request={2}" -f $Global:PhpipamApiUrl,$Global:PhpipamAppID,$Encode_Crypt_request
 
                 # no need to build header
-               try{
-                    $r=Invoke-RestMethod -Method $method -Headers $headers  -Uri $uri -ContentType $ContentType
-                    if($r -and $r.success){
-                        return $r
-                    }
-               }catch{
-                    Write-Error $_.ErrorDetails.message
-                    return $false
-               }
 
             }else{
                 Write-Error "No AppID and AppKey can be used,please use new-PhpIpamSession command first to check and store AppID and AppKey"
                 return $false
             }
          }
+
          if($global:phpipamTokenAuth -eq $null){
                 Write-Error "No Auth Method exist,please use new-PhpIpamSession command first to specify auth method and infos"
                 return $false
          }
+
+         try{
+            $r=Invoke-RestMethod -Method $method -Headers $headers  -Uri $uri -body $params -ContentType $ContentType
+            if($r -and $r -is [System.Management.Automation.PSCustomObject]){
+                return $r
+            }else{
+                # to process unvliad json output like this
+                # <div class='alert alert-danger'>Error: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'cuser' cannot be null</div>{"code":201,"success":true,"data":"Section created"}
+                if($r -and $r -is [System.String]){
+                    $objmatch=([regex]'(\{\s*"code"\s*:\s*(.+?)\s*.+?\})').Match($r)
+                    if($objmatch.Success){
+                        try{
+                            $r=ConvertFrom-Json -InputObject $objmatch.Groups[1].Value -ErrorAction Stop
+                            return $r
+                        }catch{
+                            return $false
+                        }
+                    }else{
+                        Write-Error $("Can not parse the output [" + $r +']')
+                        return $false
+                    }
+                }
+            }
+        }catch{
+            Write-Error $_.ErrorDetails.message
+            return $false
+        }
 }
 
 function Remove-PhpIpamSession{
@@ -432,8 +450,44 @@ function Convert-IdentifiersArrayToHashTable{
         if($i -eq 0){
             $output.Add("id",$Identifiers[$i])
         }else{
-            $output.add("id$($i)",$Identifiers[$i])
+            $output.add("id$($i+1)",$Identifiers[$i])
         }
     }
     return $output
    }
+
+
+   function ConvertTo-PsCustomObjectFromHashtable { 
+     param ( 
+         [Parameter(  
+             Position = 0,   
+             Mandatory = $true,   
+             ValueFromPipeline = $true,  
+             ValueFromPipelineByPropertyName = $true  
+         )][hashtable] $hashtable 
+     ); 
+     
+     begin { $i = 0; } 
+     
+     process {
+        return $([PSCustomObject]$hashtable )
+     } 
+}
+function ConvertTo-HashtableFromPsCustomObject { 
+     param ( 
+         [Parameter(  
+             Position = 0,   
+             Mandatory = $true,   
+             ValueFromPipeline = $true,  
+             ValueFromPipelineByPropertyName = $true  
+         )] $inputObject 
+     ); 
+     
+     process { 
+            $output = @{}; 
+            $inputObject | Get-Member -MemberType *Property | % { 
+                $output.($_.name) = $inputObject.($_.name); 
+            } 
+            return $output;  
+     } 
+}
