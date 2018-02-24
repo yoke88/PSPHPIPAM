@@ -4,9 +4,11 @@ Vagrant.configure("2") do |config|
   config.vm.box_check_update = false
   config.vm.provision "setRepo",type:"shell", inline: "yum makecache"
 
-	# install docker
+	# install docker and force new session to refresh docker group membership
+
+	# https://technology.amis.nl/2015/08/22/first-steps-with-provisioning-of-docker-containers-using-vagrant-as-provider/
   config.vm.provision "docker"
-  config.vm.provision "shell",inline: "systemctl restart sshd"
+  config.vm.provision "shell", inline: "ps aux | grep 'sshd:' | awk '{print $2}' | xargs kill"
 	# 80 - phpipam
 
   [80].each do |port|

@@ -38,12 +38,11 @@ Vagrant.configure("2") do |config|
       d.ports=['80:80']
     end
     phpipam.vm.synced_folder ".", "/vagrant", disabled: true
-  end
-
-  config.vm.post_up_message="
+    phpipam.vm.post_up_message="
   ========================================================================
     config the phpipam env at      : http://127.0.0.1/
     the default mysql root pass is : my-secret-pw-Oo
   ========================================================================
     "
+  end
 end

@@ -124,7 +124,7 @@ function Invoke-PhpIpamExecute{
         [string]$method="get",
 
         [parameter(mandatory=$true,HelpMessage="Enter the controller (API Endpoint)")]
-        [validateSet("sections","subnets","folders","addresses","vlans","l2domains","vfr","tools","prefix")]
+        [validateSet("sections","subnets","folders","addresses","vlans","l2domains","vfr","tools","prefix","user")]
         [alias('Endpoint')]
         [string]$controller="sections",
 
@@ -150,8 +150,7 @@ function Invoke-PhpIpamExecute{
         if($params -is [psCustomObject]){
             $params=$params|ConvertTo-HashtableFromPsCustomObject
         }
-        
-        Write-Verbose "identifiers$(convertto-json $identifiers)"
+
         if($global:phpipamTokenAuth){
             Write-Debug "Using TokenAuth,Test Token Status"
             $ipamstatus=test-PhpIpamToken
@@ -170,8 +169,7 @@ function Invoke-PhpIpamExecute{
             }
 
             if($ipamstatus -eq 'notoken'){
-                Write-Error 'No Token can be used,please use new-PhpIpamSession command first to get token'
-                return $null
+                throw 'No Token can be used,please use new-PhpIpamSession command first to get token'
             }
 
             # build headers
@@ -202,19 +200,18 @@ function Invoke-PhpIpamExecute{
                 Write-Verbose "json_request: $(convertto-json $json_request)"
                 $crypt_request=Protect-Rijndael256ECB -Key $Global:PhpipamAppKey -Plaintext $json_request
                 $Encode_Crypt_request=[System.Web.HttpUtility]::UrlEncode($crypt_request)
+
                 $uri="{0}/?app_id={1}&enc_request={2}" -f $Global:PhpipamApiUrl,$Global:PhpipamAppID,$Encode_Crypt_request
 
                 # no need to build header
 
             }else{
-                Write-Error "No AppID and AppKey can be used,please use new-PhpIpamSession command first to check and store AppID and AppKey"
-                return $false
+                throw "No AppID and AppKey can be used,please use new-PhpIpamSession command first to check and store AppID and AppKey"
             }
          }
 
          if($global:phpipamTokenAuth -eq $null){
-                Write-Error "No Auth Method exist,please use new-PhpIpamSession command first to specify auth method and infos"
-                return $false
+                throw "No Auth Method exist,please use new-PhpIpamSession command first to specify auth method and infos"
          }
 
          try{
@@ -231,17 +228,15 @@ function Invoke-PhpIpamExecute{
                             $r=ConvertFrom-Json -InputObject $objmatch.Groups[1].Value -ErrorAction Stop
                             return $r
                         }catch{
-                            return $false
+                            throw $("Can not parse the output [" + $r +']')
                         }
                     }else{
-                        Write-Error $("Can not parse the output [" + $r +']')
-                        return $false
+                        throw $("Can not parse the output [" + $r +']')
                     }
                 }
             }
         }catch{
-            Write-Error $_.ErrorDetails.message
-            return $false
+            throw $_.ErrorDetails.message
         }
 }
 
@@ -319,7 +314,6 @@ function New-PhpIpamSession{
         [parameter(mandatory=$true, HelpMessage="Enter the Api Url of IppIpam")]
         [validatescript({$_.startswith("http")})]
         [string]$PhpIpamApiUrl,
-
         [parameter(mandatory=$true,ParameterSetName="UseCredAuth", HelpMessage="Enter the AppID of PhpIpam")]
         [parameter(mandatory=$true,ParameterSetName="UseAppKeyAuth", HelpMessage="Enter the AppID of PhpIpam")]
         [string]$AppID,
@@ -335,6 +329,11 @@ function New-PhpIpamSession{
         [string]$password
 
         )
+
+        if($PhpIpamApiUrl.EndsWith("/")){
+            $PhpIpamApiUrl=$PhpIpamApiUrl.TrimEnd("/")
+        }
+
         if($useCredAuth){
             $token="{0}:{1}" -f $username,$password
             $base64Token=[convert]::ToBase64String([char[]]$token)
@@ -342,10 +341,6 @@ function New-PhpIpamSession{
             $headers=@{
                         Authorization="Basic {0}" -f $base64Token
             }
-            if($PhpIpamApiUrl.EndsWith("/")){
-                $PhpIpamApiUrl=$PhpIpamApiUrl.TrimEnd("/")
-            }
-
             $uri="{0}/{1}/user/" -f $PhpIpamApiUrl,$AppID
 
             try{
@@ -379,6 +374,7 @@ function New-PhpIpamSession{
             
             try{
                 $r=Invoke-RestMethod -Method get -Uri $uri 
+                write-debug $r
                 if($r -and $r.success){
                 # success
                     $global:PhpIpamApiUrl =$PhpIpamApiUrl
@@ -387,15 +383,15 @@ function New-PhpIpamSession{
                     $global:PhpIpamTokenAuth=$false
                     return $true
                 }else{
-                    Write-Error "Somthing error there"
                     return $false
                 }
+
             }catch{
                 write-error $_.ErrorDetails.message
-                return $false
+                return $null 
             }
         }
-}  
+}
 
 function Test-PhpIpamToken{
     <#
@@ -405,36 +401,45 @@ function Test-PhpIpamToken{
          .Example
          test-PhpIpamToken
     #>
-
-    if($global:PhpIpamTokenExpires){
-        if($global:PhpIpamTokenExpires -lt $(get-date)){
-            return "Expired"
-        }else{
-            return "Valid"
-        }
+    if(!$Global:PhpIpamTokenAuth){
+        Write-Warning "Because you use encrypted request(You never get a token,Do not use this func if you using encryped request)"
+        return "Valid"
     }else{
-        return "NoToken"
+        if($global:PhpIpamTokenExpires){
+            if($global:PhpIpamTokenExpires -lt $(get-date)){
+                return "Expired"
+            }else{
+                return "Valid"
+            }
+        }else{
+            return "NoToken"
+        }
     }
+
 }
 
 function Expand-PhpIpamTokenLife{
 param(
     [switch]$force
 )
-    if(!$force){
-        $TokenStatus=test-PhpIpamToken
-        if($Tokenstatus -eq "Valid"){
-            $r=invoke-PHPIpamExecute -method patch -controller user -useCredAuth
-            if($r){
-                $global:PhpIpamTokenExpires=$r.data.expired
-                return $r.data.expired
+    if($Global:PhpIpamTokenAuth){
+        if(!$force){
+            $TokenStatus=test-PhpIpamToken
+            if($Tokenstatus -eq "Valid"){
+                $r=invoke-PHPIpamExecute -method patch -controller user
+                if($r){
+                    $global:PhpIpamTokenExpires=$r.data.expires
+                    return $r.data.expires
+                }
             }
         }
-    }
-    if($TokenStatus -eq "Expired" -or $force){
-        if(New-PhpIpamSession -useCredAuth -PhpIpamApiUrl $global:PhpIpamApiUrl -AppID $Global:PhpIpamAppID -userName $global:PhpIpamUsername -password $global:PhpIpamPassword){
-            return $global:PhpIpamTokenExpires
+        if($TokenStatus -eq "Expired" -or $force){
+            if(New-PhpIpamSession -useCredAuth -PhpIpamApiUrl $global:PhpIpamApiUrl -AppID $Global:PhpIpamAppID -userName $global:PhpIpamUsername -password $global:PhpIpamPassword){
+                return $global:PhpIpamTokenExpires
+            }
         }
+    }else{
+        Write-Warning "Because you use encrypted request(You never get a token,Do not use this func if you using encryped request)"
     }
 }
 
