@@ -8,4 +8,4 @@
 
 invoke-pester return output like this
 
-![invoke-pester-result](..\screenshots\invoke-pester-result.jpg)
+![invoke-pester-result](../screenshots/invoke-pester-result.JPG)
