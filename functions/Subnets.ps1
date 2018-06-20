@@ -199,3 +199,20 @@ function New-PhpIpamSubnet{
     }
 }
 
+function Update-PhpIpamSubnet{
+    [cmdletBinding()]
+    param(
+        [parameter(Mandatory=$true,ValueFromPipeline=$true,ValueFromPipelineByPropertyName=$true,Position=0)]
+        [validatescript({$_ -is [hashtable] -or $_ -is [psCustomObject]})]
+        $Params=@{}
+    )
+    BEGIN{
+
+    }
+    PROCESS{
+        return $(Invoke-PhpIpamExecute -method patch -controller subnets -params $Params).success
+    }
+    END{
+
+    }
+}
