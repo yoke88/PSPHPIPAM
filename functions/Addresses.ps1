@@ -134,3 +134,22 @@ function Search-PhpIpamAddressByHostname{
     }
 }
 
+
+function Remove-PhpIpamAddressByID{
+    [cmdletBinding()]
+    Param(
+         [parameter(Mandatory=$true,ValueFromPipeline=$true,ValueFromPipelineByPropertyName=$true,position=0)]
+         [int]$ID
+    )
+
+    begin{
+        Write-Verbose $ID
+    }
+    process{
+        return $(Invoke-PhpIpamExecute -method delete -controller addresses -identifiers @($ID)).success
+    }
+
+    end{
+
+    }
+}
