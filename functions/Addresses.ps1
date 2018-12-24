@@ -143,9 +143,10 @@ function Remove-PhpIpamAddressByID{
     )
 
     begin{
-        Write-Verbose $ID
+        
     }
     process{
+        Write-Verbose $ID
         return $(Invoke-PhpIpamExecute -method delete -controller addresses -identifiers @($ID)).success
     }
 
