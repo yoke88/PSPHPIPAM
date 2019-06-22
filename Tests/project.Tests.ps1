@@ -13,7 +13,7 @@ Context "Module Baseline" -tag "PROJECT"{
         }
         It "Module can import" {
             {
-                Import-Module -Name $ModuleName -ErrorAction stop -WarningAction SilentlyContinue
+                Import-Module -Name "$PSScriptRoot\..\$($ModuleName).psm1" -ErrorAction stop -WarningAction SilentlyContinue
             } | Should -not -Throw
         }
     }
