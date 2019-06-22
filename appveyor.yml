@@ -2,7 +2,7 @@ environment:
   matrix:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       PSEdition: Core
-    - APPVEYOR_BUILD_WORKER_IMAGE: WMF 4
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       PSEdition: Desktop
 
 skip_branch_with_pr: true
