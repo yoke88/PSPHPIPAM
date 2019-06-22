@@ -11,7 +11,7 @@ this powershell module using PHPIPAM rest api to operate PHPIPAM tasks ,powershe
 
 * psd1,psm1 后缀的文件是powershell 模组文件，psd1是模块的元数据，psm1 的代码主要是调用functions目录下的所有ps1 文件。
   * phpipamBaseFunctions.ps1 是整个模块的核心。这里实现了调用PHPIPAM API 的所有核心函数。
-  * 其他以PHPIPAM Controller名称命名的ps1 文件，是针对这个Controller 实现的一些涉及到特定controller 的cmdlet.实际上都是调用invoke-phpipamexecute 这个函数 
+  * 其他以PHPIPAM Controller名称命名的ps1 文件，是针对这个Controller 实现的一些涉及到特定controller 的cmdlet.实际上都是调用invoke-phpipamexecute 这个函数
 
 ### How to use vagrant Lab
  * install vagrant and virtualbox
@@ -20,7 +20,7 @@ this powershell module using PHPIPAM rest api to operate PHPIPAM tasks ,powershe
 
  ```text
  ========================================================================
-    config the phpipam env at      : http://127.0.0.1/
+    config the phpipam env at      : http://127.0.0.1:8080/
     the default mysql root pass is : my-secret-pw-Oo
  ========================================================================
  ```
@@ -32,7 +32,7 @@ this powershell module using PHPIPAM rest api to operate PHPIPAM tasks ,powershe
 ``` powershell
 # Using Token Auth (Username + password + appid)
 # username is admin ,and password is password ,and the apiid is script2
-# if success , token will be cached in $GLOBAL:PHPIPAMTOKEN
+# if success , token will be cached in $script:PHPIPAMTOKEN
  New-PhpIpamSession -useCredAuth -PhpIpamApiUrl http://127.0.0.1/api -AppID script2 -userName admin -password password
 
  # using invoke-phpipamexecute operate API
@@ -54,7 +54,7 @@ this powershell module using PHPIPAM rest api to operate PHPIPAM tasks ,powershe
 
 ``` powershell
 # Using Encryped Request (APPID +APPKey)
-# AppID is script and APPkey is  '5f40c5ba5730bdb93ca561efe5bae433' , APPID and APPKEY will be cached in $GLOBAL:PHPIPAMAPPID $GLOBAL:PHPIPAMAPPKEY
+# AppID is script and APPkey is  '5f40c5ba5730bdb93ca561efe5bae433' , APPID and APPKEY will be cached in $script:PHPIPAMAPPID $script:PHPIPAMAPPKEY
  New-PhpIpamSession -useAppkeyAuth -PhpIpamApiUrl http://127.0.0.1/api -AppID script -Appkey '5f40c5ba5730bdb93ca561efe5bae433'
 
  # using invoke-phpipamexecute operate API

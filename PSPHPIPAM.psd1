@@ -12,7 +12,7 @@
 RootModule = 'PSPHPIPAM.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.1'
+ModuleVersion = '1.1.1'
 
 # ID used to uniquely identify this module
 GUID = '7facf42f-dc67-4408-86eb-859e6b82e34e'
@@ -31,6 +31,7 @@ Description = 'This module uses the REST API in the PHPIPAM  1.12 to query and m
 
 # Minimum version of the Windows PowerShell engine required by this module
 PowerShellVersion = '3.0'
+
 
 # Name of the Windows PowerShell host required by this module
 # PowerShellHostName = ''
@@ -54,8 +55,10 @@ PowerShellVersion = '3.0'
 # RequiredAssemblies = @()
 
 # Script files (.ps1) that are run in the caller's environment prior to importing this module.
-# ScriptsToProcess = @()
-
+<#ScriptsToProcess = @(
+        "functions\PhpIpamBaseFunctions.ps1"
+    )
+#>
 # Type files (.ps1xml) to be loaded when importing this module
 # TypesToProcess = @()
 
@@ -69,13 +72,13 @@ PowerShellVersion = '3.0'
 FunctionsToExport = '*'
 
 # Cmdlets to export from this module
-CmdletsToExport = ''
+CmdletsToExport = '*'
 
 # Variables to export from this module
 VariablesToExport = '*'
 
 # Aliases to export from this module
-AliasesToExport = ''
+AliasesToExport = '*'
 
 # List of all modules packaged with this module
 # ModuleList = @()
@@ -89,7 +92,7 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        Tags = 'PSModule','PHPAPAM',,'REST','API'
+        Tags = 'PSModule','PHPAPAM','REST','API'
 
         # A URL to the license for this module.
         #LicenseUri = ''

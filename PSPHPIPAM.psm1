@@ -11,18 +11,21 @@
     Requires     : PowerShell V3
 #>
 
-
-$ScriptPath = Split-Path $MyInvocation.MyCommand.Path
-
-
-try {
-    Get-ChildItem "$ScriptPath\Functions" -Filter *.ps1 -Recurse| Select-Object -Expand FullName | ForEach-Object {
-        $Function = Split-Path $_ -Leaf
-        . $_
+# file path in linux is case sensive,make sure 
+$FunctionFolder = join-path -path $PSScriptRoot -ChildPath "Functions"
+if (test-path $FunctionFolder) {
+    Get-ChildItem $FunctionFolder -Filter *.ps1 -Recurse -Exclude "*.Tests.ps1", "*.tests.ps1" | Select-Object -Expand FullName | ForEach-Object {
+        $ScriptPath = $_
+        try {
+            . $ScriptPath
+        }
+        catch {
+            Write-Error -Message "Failed to import function in $ScriptPath"
+        }   
     }
-} catch {
-    Write-Warning ("{0}: {1}" -f $Function,$_.Exception.Message)
-    Continue
+}else {
+    Write-Error "check path $FunctionFolder exist and whether there is a typo"
 }
 
+disable-CertsCheck
 #endregion

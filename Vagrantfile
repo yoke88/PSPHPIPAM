@@ -10,7 +10,7 @@ if (/cygwin|mswin|mingw|bccwin|wince|emx/ =~ RUBY_PLATFORM) != nil
   # if linux or macos using docker locally
   force_host_vm = true
 else
-  force_host_vm = false 
+  force_host_vm = true 
 end
 DEFAULT_MYSQL_ROOT_PASSWORD='my-secret-pw-Oo'
 ENV['VAGRANT_DEFAULT_PROVIDER'] = "docker"
@@ -40,7 +40,7 @@ Vagrant.configure("2") do |config|
     phpipam.vm.synced_folder ".", "/vagrant", disabled: true
     phpipam.vm.post_up_message="
   ========================================================================
-    config the phpipam env at      : http://127.0.0.1/
+    config the phpipam env at      : http://127.0.0.1:8080/
     the default mysql root pass is : my-secret-pw-Oo
   ========================================================================
     "
