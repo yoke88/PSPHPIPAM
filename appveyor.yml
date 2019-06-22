@@ -1,4 +1,14 @@
-os: Visual Studio 2017
+environment:
+  matrix:
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      PSEdition: Core
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      PSEdition: Desktop
+    - APPVEYOR_BUILD_WORKER_IMAGE: WMF 4
+      PSEdition: Desktop
+
+skip_branch_with_pr: true
+build: off
 
 # Skip on updates to the readme.
 # We can force this by adding [skip ci] or [ci skip] anywhere in commit message
