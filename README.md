@@ -1,4 +1,4 @@
-# Powershell REST client module for PHPIPAM
+# Powershell REST Client Module For PHPIPAM
 
 this powershell module using PHPIPAM rest api to operate PHPIPAM tasks ,powershell version suggest 3.0 or above.
 
@@ -18,7 +18,7 @@ this module works on powershell core 6.0 and above now ,and the test environment
 －　Functions 目录放置该模块的主要的函数＼包括基础模块函数还有其他扩展的函数．如果你要扩充模块，请添加命令到Functions\Public ，参考其他的函数命令，比如Functions\Public|TestIdears
 
 －　Nginx 是PhpIpam 测试开发环境使用的nginx 配置文件及证书，我会使用vagrant 来创建一个PHPipam 的环境，其使用docker 搭建了一个可用的Phpipam环境
-－　｀buildenv.*` 可以用来创建PHPIPAM 开发测试环境，需要安装vagrant，virtualbox [参考]("Docs\1.create_dev_env_with_vagrant.md")
+－　｀buildenv.*` 可以用来创建PHPIPAM 开发测试环境，需要安装vagrant，virtualbox [参考](Docs/1.create_dev_env_with_vagrant.md)
 
 
 
@@ -26,8 +26,8 @@ this module works on powershell core 6.0 and above now ,and the test environment
 ### Examples
 
 Read the docs:
-- [use vagrant to create a dev env]("Docs\1.create_dev_env_with_vagrant.md")
-- [configure API account](Docs\2.configure_API.md)
+- [use vagrant to create a dev env](Docs/1.create_dev_env_with_vagrant.md)
+- [configure API account](Docs/2.configure_API.md)
 - read example test file under Tests\*.ps1
 
 ### How to Debug
