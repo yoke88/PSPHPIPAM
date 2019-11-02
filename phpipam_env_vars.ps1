@@ -1,3 +1,6 @@
+# This file was used in pester test files
+# for speedly change the variable which was commonly used
+
 $PHPIPAM_HTTP_URL="http://127.0.0.1:8080"
 $PHPIPAM_HTTPS_URL="https://127.0.0.1:4433"
 $PHPIPAM_USER_NAME="admin"
