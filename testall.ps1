@@ -1,0 +1,1 @@
+Invoke-psake psake.ps1 -taskList TestAll

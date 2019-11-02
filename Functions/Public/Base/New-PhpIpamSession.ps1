@@ -69,11 +69,12 @@ function New-PhpIpamSession {
         [parameter(mandatory = $true, ParameterSetName = "UseCredAuth", HelpMessage = "Enter the AppID of PhpIpam")]
         [parameter(mandatory = $true, ParameterSetName = "UseCryptAuth", HelpMessage = "Enter the AppID of PhpIpam")]
         [parameter(mandatory = $true, ParameterSetName = "UseStaticAppKeyAuth", HelpMessage = "Enter the AppID of PhpIpam")]
+        [Alias("AppCode")]
         [string]$AppID,
 
         [parameter(mandatory = $true, ParameterSetName = "UseCryptAuth", HelpMessage = "Enter the AppKey of PhpIpam")]
         [parameter(mandatory = $true, ParameterSetName = "UseStaticAppKeyAuth", HelpMessage = "Enter the AppID of PhpIpam")]
-        [validatepattern("^[0-9a-fA-f]{32}$")]
+        [validatepattern("^[\w\-_]{32}$")]
         [string]$AppKey,
 
         [parameter(mandatory = $true, ParameterSetName = "UseCredAuth", HelpMessage = "Enter the Username of PhpIpam.")]
