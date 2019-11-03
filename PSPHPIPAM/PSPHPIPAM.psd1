@@ -12,7 +12,7 @@
 RootModule = 'PSPHPIPAM.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.1.1'
+ModuleVersion = '1.2.0'
 
 # ID used to uniquely identify this module
 GUID = '7facf42f-dc67-4408-86eb-859e6b82e34e'
