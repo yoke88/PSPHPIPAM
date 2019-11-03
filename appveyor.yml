@@ -18,7 +18,7 @@ build: false
 before_test:
 - cmd: |
     docker-compose -f virtual_env/docker-compose.yml up -d
-    docker-compose -f virtual_env/docker-compose.yml exec phpipam sed -i 's/api_allow_unsafe = false/api_allow_unsafe = true/' /var/www/html/config.php
+    docker-compose -f virtual_env/docker-compose.yml exec phpipam sed -i "s/api_allow_unsafe = false/api_allow_unsafe = true/" /var/www/html/config.php
 
 test_script:
 - ps: |
