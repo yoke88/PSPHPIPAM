@@ -1,11 +1,10 @@
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path).Replace(".Tests.", ".")
 
-$ModuleName="PSPHPIPAM"
-$ModuleFileFolder=$here -replace '/Tests/',"/$ModuleName/"
+$sep=[System.IO.Path]::DirectorySeparatorChar
+$ModuleFileFolder=$here -replace '$($sep)Tests$($sep)',"$($sep)$ModuleName$($sep)"
 
 . "$ModuleFileFolder\$sut"
-
 $i=0
 $top_folder=$here
 do{
