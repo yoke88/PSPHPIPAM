@@ -6,6 +6,8 @@ environment:
       PSEdition: Desktop
 
 skip_branch_with_pr: true
+init:
+- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 # Skip on updates to the readme.
 # We can force this by adding [skip ci] or [ci skip] anywhere in commit message
@@ -18,9 +20,9 @@ build: false
 before_test:
 - cmd: |
     docker-compose -f virtual_env/docker-compose.yml up -d
-    sleep 20
+    sleep 120
     docker-compose -f virtual_env/docker-compose.yml exec phpipam sed -i "s/api_allow_unsafe = false/api_allow_unsafe = true/" /var/www/html/config.php
-    sleep 20
+    sleep 120
 test_script:
 - ps: |
     . .\build.ps1 Test
@@ -28,6 +30,5 @@ test_script:
 - pwsh: |
     . .\build.ps1 Test
     (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/${env:APPVEYOR_JOB_ID}", (Join-Path $PWD 'TestResults.xml'))
-# debug build env
-on_finish:
-- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
+
