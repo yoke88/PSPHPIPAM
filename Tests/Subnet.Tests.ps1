@@ -1,7 +1,8 @@
 $Target = "Subnets"
+$ModuleName="PSPHPIPAM"
 Context "$Target" -tag "API"  {
-    Remove-Module "PSPHPIPAM" -ErrorAction SilentlyContinue |Out-Null
-    Import-Module "$PSScriptRoot\..\PSPHPIPAM.psm1"
+    Remove-Module $ModuleName -ErrorAction SilentlyContinue |Out-Null
+    Import-Module "$PSScriptRoot\..\$ModuleName"
     if(test-path "$PSScriptRoot\..\phpipam_env_vars.ps1"){
         . "$PSScriptRoot\..\phpipam_env_vars.ps1"
     }else{

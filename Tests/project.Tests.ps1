@@ -1,6 +1,6 @@
 #TODO Every Public Function should using cmdletbinding()
+$ModuleName="PSPHPIPAM"
 Context "Module Baseline" -tag "PROJECT"{
-    $ModuleName = "PSPHPIPAM"
     if (Get-Module $ModuleName -ErrorAction SilentlyContinue) {
         Remove-Module $ModuleName -Force
     }
@@ -8,12 +8,12 @@ Context "Module Baseline" -tag "PROJECT"{
     Describe 'Module Validation' {
         It "Module manifest is valid" {
             {
-                Test-ModuleManifest -Path "$PSScriptRoot\..\$($ModuleName).psd1" -ErrorAction stop -WarningAction SilentlyContinue
+                Test-ModuleManifest -Path "$PSScriptRoot\..\$ModuleName\$ModuleName.psd1" -ErrorAction stop -WarningAction SilentlyContinue
             } | should -not -Throw
         }
         It "Module can import" {
             {
-                Import-Module -Name "$PSScriptRoot\..\$($ModuleName).psm1" -ErrorAction stop -WarningAction SilentlyContinue
+                Import-Module -Name "$PSScriptRoot\..\$ModuleName" -ErrorAction stop -WarningAction SilentlyContinue
             } | Should -not -Throw
         }
     }
