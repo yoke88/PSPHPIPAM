@@ -29,16 +29,16 @@ build: false
 
 #Kick off the CI/CD pipeline
 before_test:
-- cmd: |
-    docker-compose -f virtual_env/docker-compose.yml up -d
-    sleep 120
-    docker-compose -f virtual_env/docker-compose.yml exec phpipam sed -i "s/api_allow_unsafe = false/api_allow_unsafe = true/" /var/www/html/config.php
-    sleep 120
-- sh: |
-    docker-compose -f virtual_env/docker-compose.yml up -d
-    sleep 120
-    docker-compose -f virtual_env/docker-compose.yml exec phpipam sed -i "s/api_allow_unsafe = false/api_allow_unsafe = true/" /var/www/html/config.php
-    sleep 120
+- cmd: 
+    - docker-compose -f virtual_env/docker-compose.yml up -d
+    - sleep 120
+    - docker-compose -f virtual_env/docker-compose.yml exec phpipam sed -i "s/api_allow_unsafe = false/api_allow_unsafe = true/" /var/www/html/config.php
+    - sleep 120
+- sh: 
+    - docker-compose -f virtual_env/docker-compose.yml up -d
+    - sleep 120
+    - docker-compose -f virtual_env/docker-compose.yml exec phpipam sed -i "s/api_allow_unsafe = false/api_allow_unsafe = true/" /var/www/html/config.php
+    - sleep 120
 test_script:
 # if linux , linux will using powershell core, and windows will use powershell full version
 - ps: |
