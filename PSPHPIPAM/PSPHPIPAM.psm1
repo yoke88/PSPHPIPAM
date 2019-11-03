@@ -4,7 +4,7 @@
     A Powershell module for using the PHPIPAM API to automate some operation
 .DESCRIPTION  
     This module uses the PHPIPAM REST API to manipulate and query Objects in PHPIPAM
-    It is built to work with version 1.12
+    It is built to work with version 1.12 and above
 .NOTES  
     File Name    : PSPHPIPAM.psm1
     Author       : yoke88 yoke-msn@Hotmail.com
