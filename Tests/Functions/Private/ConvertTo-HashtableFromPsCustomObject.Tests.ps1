@@ -1,6 +1,6 @@
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path).Replace(".Tests.", ".")
-$sep=[System.IO.Path]::DirectorySeparatorChar
+$sep=[regex]::Escape([System.IO.Path]::DirectorySeparatorChar)
 $ModuleFileFolder=$here -replace "$($sep)Tests$($sep)","$($sep)$ModuleName$($sep)"
 
 . "$ModuleFileFolder\$sut"
