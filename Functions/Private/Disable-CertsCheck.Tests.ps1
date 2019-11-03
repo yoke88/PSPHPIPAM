@@ -3,9 +3,15 @@ $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path).Replace(".Tests.", ".")
 
 . "$here\$sut"
 
+if(test-path "$here\..\..\phpipam_env_vars.ps1"){
+    . "$here\..\..\phpipam_env_vars.ps1"
+}else{
+    throw "can not found $("$here\..\..\phpipam_env_vars.ps1")"
+}
+
 Describe "Disable-CertsCheck" {
     # url with non public cert
-    $exampleUrl = "https://example.com/"
+    $exampleUrl = $PHPIPAM_HTTPS_URL
     try {
         Invoke-WebRequest $exampleUrl  -ErrorAction stop
     } catch {
