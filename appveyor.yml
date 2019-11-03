@@ -9,12 +9,15 @@ environment:
   APPVEYOR_RDP_PASSWORD:
     secure: MEWQ+6pSVNtyr2Rh6f9r7g==
   APPVEYOR_SSH_KEY: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDQHu7NW5CjEp3c4kzcSdQecJoVf2BfgF4URMTouvD3Td/3L0vTAPM6+bNvd3i/t0GzEp2kv7kALyQDrZbb5H3aTQ5wPC7b/In/De5F2BQjrgO1dfR598nnju1ELHrMLqM482BFHMkpF4zPERcNlaAZTgz45YR/cPhcZTVvXSBMen/fzxht8klj7rEkZDtWKkRzO28eHE5P3qr0zSNvKCMXpIHcsp9NnDSgM45j18yqj+iEVZBSoIVnfKuw4WPRx50AWVoy8MaYSFhch9dwe3dVXvH3ErhxnMKD6La4ydEdWJsPF6hQtGf8GIDWGwOZH1gK+DxIrJMMN4BYBfcLVTPp appveyor
-  
+
   
 skip_branch_with_pr: true
 
 services:
 - docker
+
+install: 
+  - sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose 
 
 # Skip on updates to the readme.
 # We can force this by adding [skip ci] or [ci skip] anywhere in commit message
