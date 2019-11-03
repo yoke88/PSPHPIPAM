@@ -42,7 +42,13 @@ before_test:
 test_script:
 # if linux , linux will using powershell core, and windows will use powershell full version
 - ps: |
-    . .\build.ps1
+    if($isWindows){
+      . .\build.ps1
+    }else{
+      sudo pwsh .\build.ps1
+    }
+
+
 on_failure:
  - ps: |
     if($isWindows){
