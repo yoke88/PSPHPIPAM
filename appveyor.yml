@@ -15,10 +15,15 @@ skip_commits:
 build: false
 
 #Kick off the CI/CD pipeline
+before_test:
+- cmd: |
+    docker-compose -f virtual_env/docker-compose.yml up -d
+    docker-compose -f virtual_env/docker-compose.yml exec phpipam sed -i 's/api_allow_unsafe = false/api_allow_unsafe = true/' /var/www/html/config.php
+
 test_script:
 - ps: |
-    . .\build.ps1 build
+    . .\build.ps1 Test
     (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/${env:APPVEYOR_JOB_ID}", (Join-Path $PWD 'TestResults.xml'))
 - pwsh: |
-    . .\build.ps1 build
+    . .\build.ps1 Test
     (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/${env:APPVEYOR_JOB_ID}", (Join-Path $PWD 'TestResults.xml'))

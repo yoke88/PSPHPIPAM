@@ -22,12 +22,13 @@ Vagrant.configure("2") do |config|
       d.image = "mysql:5.6"
       d.name="mysql"
       d.force_host_vm = force_host_vm
-      d.vagrant_vagrantfile="./Vagrantfile.host"
+      d.vagrant_vagrantfile="./virtual_env/Vagrantfile.host"
       d.env={
         'MYSQL_ROOT_PASSWORD' => DEFAULT_MYSQL_ROOT_PASSWORD
+        'MYSQL_DATABASE' => 'phpipam'
       }
     end
-    mysql.vm.synced_folder ".", "/vagrant", disabled: true
+    mysql.vm.synced_folder "./virtual_env/mysql", "/docker-entrypoint-initdb.d/", disabled: false
   end
 
   config.vm.define "phpipam" do |phpipam|
@@ -35,10 +36,10 @@ Vagrant.configure("2") do |config|
       d.image = "pierrecdn/phpipam"
       d.name="phpipam"
       d.force_host_vm = force_host_vm
-      d.vagrant_vagrantfile="./Vagrantfile.host"
+      d.vagrant_vagrantfile="./virtual_env/Vagrantfile.host"
       d.link('mysql:mysql')
       d.env={
-        'MYSQL_ROOT_PASSWORD' => DEFAULT_MYSQL_ROOT_PASSWORD
+        'MYSQL_ENV_MYSQL_ROOT_PASSWORD: my-secret-pw-Oo' => DEFAULT_MYSQL_ROOT_PASSWORD
       }
     end
     phpipam.vm.synced_folder ".", "/vagrant", disabled: true
@@ -48,7 +49,7 @@ Vagrant.configure("2") do |config|
       d.image = "nginx:alpine"
       d.name="nginx"
       d.force_host_vm = force_host_vm
-      d.vagrant_vagrantfile="./Vagrantfile.host"
+      d.vagrant_vagrantfile="./virtual_env/Vagrantfile.host"
       d.link('phpipam:phpipam')
       # phpipam does not support nat well in virtualbox ,so we make the nat port number = nginx listtening port
       # and in linux virtualbox can not listening a port < 1024 ,so we can not using 80,443 as NAT port
@@ -56,7 +57,7 @@ Vagrant.configure("2") do |config|
       
     end
     nginx.vm.synced_folder ".", "/vagrant", disabled: true
-    nginx.vm.synced_folder "nginx", "/etc/nginx/conf.d", disabled: false
+    nginx.vm.synced_folder "./virtual_env/nginx", "/etc/nginx/conf.d", disabled: false
     # nginx.vm.synced_folder "nginx/log", "/var/log/nginx", disabled: false
     nginx.vm.post_up_message="
   ========================================================================
