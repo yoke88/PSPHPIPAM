@@ -27,13 +27,13 @@ Describe "Disable-CertsCheck" {
         $e = $_
     }
 
-    if ($e.Exception.HResult -eq -2147467259) {
+    if ($e.Exception.HResult -lt 0) {
         $isNetworkOk = $false
         $isSkip=!$isNetworkOk
     }
     It "Disable-CertsCheck should throw when using default setting" -skip:$isSkip {
         $e = { Invoke-WebRequest $exampleUrl  -ErrorAction stop } | Should -throw -PassThru
-        $e.Exception.HResult | Should -BeExactly -2146233087
+        $e.Exception.HResult | Should -BeLessThan 0
     }
     It "Disable-CertsCheck should not throw" -skip:$isSkip {
         {
