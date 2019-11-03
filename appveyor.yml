@@ -36,7 +36,8 @@ before_test:
     sleep 120
 - sh: sudo docker-compose -f virtual_env/docker-compose.yml up -d
 - sh: sleep 120
-- sh: sudo docker-compose -f virtual_env/docker-compose.yml exec phpipam sed -i "s/api_allow_unsafe = false/api_allow_unsafe = true/" /var/www/html/config.php
+# try fix input device is not tty
+- sh: sudo docker-compose -f virtual_env/docker-compose.yml exec -T phpipam sed -i "s/api_allow_unsafe = false/api_allow_unsafe = true/" /var/www/html/config.php
 - sh: sleep 120
 test_script:
 # if linux , linux will using powershell core, and windows will use powershell full version
