@@ -12,8 +12,7 @@ environment:
     secure: MEWQ+6pSVNtyr2Rh6f9r7g==
   
 skip_branch_with_pr: true
-init:
- - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
 
 # Skip on updates to the readme.
 # We can force this by adding [skip ci] or [ci skip] anywhere in commit message
@@ -35,6 +34,9 @@ test_script:
     
 - pwsh: |
     . .\build.ps1
+
+on_failure:
+ - ps: $blockRdp = $true;iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 
 
