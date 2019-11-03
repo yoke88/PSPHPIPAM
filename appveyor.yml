@@ -1,18 +1,20 @@
 environment:
   matrix:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-      PSEdition: Core
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-      PSEdition: Desktop
+    - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu1804
   GithubApiKey:
     secure: JUUgqhJzTG2vB53phwWr4gEKcvbA8AJCvSl5UIyFpH3cUprJgoqBmmOo9hJDMIDk
   NugetApiKey:
     secure: mR2t3ojHPkuCV6zZEP2NujbNinRIjkhQkEa4iv7XG1Q+ddws8Zx3HLzgljSk5X6x
   APPVEYOR_RDP_PASSWORD:
     secure: MEWQ+6pSVNtyr2Rh6f9r7g==
+  APPVEYOR_SSH_KEY: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDQHu7NW5CjEp3c4kzcSdQecJoVf2BfgF4URMTouvD3Td/3L0vTAPM6+bNvd3i/t0GzEp2kv7kALyQDrZbb5H3aTQ5wPC7b/In/De5F2BQjrgO1dfR598nnju1ELHrMLqM482BFHMkpF4zPERcNlaAZTgz45YR/cPhcZTVvXSBMen/fzxht8klj7rEkZDtWKkRzO28eHE5P3qr0zSNvKCMXpIHcsp9NnDSgM45j18yqj+iEVZBSoIVnfKuw4WPRx50AWVoy8MaYSFhch9dwe3dVXvH3ErhxnMKD6La4ydEdWJsPF6hQtGf8GIDWGwOZH1gK+DxIrJMMN4BYBfcLVTPp appveyor
+  
   
 skip_branch_with_pr: true
 
+services:
+- docker
 
 # Skip on updates to the readme.
 # We can force this by adding [skip ci] or [ci skip] anywhere in commit message
@@ -28,15 +30,24 @@ before_test:
     sleep 120
     docker-compose -f virtual_env/docker-compose.yml exec phpipam sed -i "s/api_allow_unsafe = false/api_allow_unsafe = true/" /var/www/html/config.php
     sleep 120
+- sh: |
+    docker-compose -f virtual_env/docker-compose.yml up -d
+    sleep 120
+    docker-compose -f virtual_env/docker-compose.yml exec phpipam sed -i "s/api_allow_unsafe = false/api_allow_unsafe = true/" /var/www/html/config.php
+    sleep 120
 test_script:
+# if linux , linux will using powershell core, and windows will use powershell full version
 - ps: |
     . .\build.ps1
-    
-- pwsh: |
-    . .\build.ps1
-
 on_failure:
- - ps: $blockRdp = $true;iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+ - ps: |
+    if($isWindows){
+      $blockRdp = $true;
+      iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+    }
+ - sh: |
+    export APPVEYOR_SSH_BLOCK=true
+    curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
 
 
 
