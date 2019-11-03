@@ -8,10 +8,12 @@ environment:
     secure: JUUgqhJzTG2vB53phwWr4gEKcvbA8AJCvSl5UIyFpH3cUprJgoqBmmOo9hJDMIDk
   NugetApiKey:
     secure: QlV2cU1S/Gm6MQviu7jvNwUFmU/G98PgSOda4gjfrY7pPBmZtkps30mHT+0pTPgL
+  APPVEYOR_RDP_PASSWORD:
+    secure: MEWQ+6pSVNtyr2Rh6f9r7g==
   
 skip_branch_with_pr: true
 init:
-# - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+ - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 # Skip on updates to the readme.
 # We can force this by adding [skip ci] or [ci skip] anywhere in commit message
