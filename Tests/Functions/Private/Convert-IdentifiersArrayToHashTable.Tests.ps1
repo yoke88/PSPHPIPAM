@@ -2,7 +2,7 @@ $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path).Replace(".Tests.", ".")
 $ModuleName="PSPHPIPAM"
 $sep=[System.IO.Path]::DirectorySeparatorChar
-$ModuleFileFolder=$here -replace [regex]::Escape("$($sep)Tests$($sep)"),"$($sep)$ModuleName$($sep)"
+$ModuleFileFolder=$here -replace [regex]::Escape("$($sep)Tests$($sep)"),"$($sep)$($ModuleName)$($sep)"
 
 . "$ModuleFileFolder\$sut"
 
