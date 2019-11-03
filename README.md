@@ -1,5 +1,9 @@
 # Powershell REST Client Module For PHPIPAM
 
+[![Build status](https://ci.appveyor.com/api/projects/status/5730189ukhlife0l?svg=true)](https://ci.appveyor.com/project/yoke88/psphpipam)
+
+
+
 this powershell module using PHPIPAM rest api to operate PHPIPAM tasks ,powershell version suggest 3.0 or above.
 
 this module works on powershell core 6.0 and above now ,and the test environment is mainly on linux and powershell core
