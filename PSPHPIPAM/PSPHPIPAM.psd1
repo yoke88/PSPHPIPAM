@@ -12,7 +12,7 @@
 RootModule = 'PSPHPIPAM.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.2.0'
+ModuleVersion = '1.3.0'
 
 # ID used to uniquely identify this module
 GUID = '7facf42f-dc67-4408-86eb-859e6b82e34e'
@@ -31,7 +31,8 @@ Description = 'This module uses the REST API in the PHPIPAM  1.12 to query and m
 
 # Minimum version of the Windows PowerShell engine required by this module
 PowerShellVersion = '3.0'
-CompatiblePSEditions=@('Desktop','Core')
+# below only supported when PowerShellVersion=5.1 or above
+# CompatiblePSEditions=@('Desktop','Core')
 
 # Name of the Windows PowerShell host required by this module
 # PowerShellHostName = ''
@@ -92,7 +93,7 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        Tags = 'PSModule','PHPAPAM','REST','API'
+        Tags = 'Module','PHPAPAM','REST','API','linux', 'Core','Desktop','Windows'
 
         # A URL to the license for this module.
         LicenseUri = 'https://github.com/yoke88/PSPHPIPAM/blob/master/LICENSE'
