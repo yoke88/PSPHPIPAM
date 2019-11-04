@@ -31,7 +31,7 @@ Description = 'This module uses the REST API in the PHPIPAM  1.12 to query and m
 
 # Minimum version of the Windows PowerShell engine required by this module
 PowerShellVersion = '3.0'
-
+CompatiblePSEditions=['Desktop','Core']
 
 # Name of the Windows PowerShell host required by this module
 # PowerShellHostName = ''
