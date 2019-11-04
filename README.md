@@ -8,6 +8,26 @@ this powershell module using PHPIPAM rest api to operate PHPIPAM tasks ,powershe
 
 this module works on powershell core 6.0 and above now ,and the test environment is mainly on linux and powershell core
 
+```Powershell
+# if you just want to use it , install PSPHPIPAM module
+
+Install-Module -Name PSPHPIPAM
+
+# list command this module provide 
+
+get-command -module PSPHPIPAM
+
+# get help for a command
+
+get-help Get-PhpIpamSubnet -full
+
+# just get example of a command
+
+get-help Get-PhpIpamSubnet -examples
+
+# if you want to extend the module functions, read Docs\* and Tests\* under this project to gain idears.
+
+```
 ## Alerts
 
 > No support and test with PHPIPAM 'encryped' Application security mode. 
