@@ -54,7 +54,7 @@ function New-PhpIpamSession {
         )]
         [switch]
         [Alias("UseCryptAuth", "CryptAuth", "UseEncryptAuth")]
-        [ValidateScript( { if ($PSVersionTable.PSEdition -eq 'Core') { throw("CrptoAuth need Rijndael256, it's not implemented in powershell core") } })]
+        [ValidateScript( { if ($PSVersionTable.PSEdition -eq 'Core') { throw("CryptoAuth need Rijndael256, it's not implemented in powershell core") } else {$true} })]
         # for compatible , leave this parameter name not changed, it may be confusing
         $UseAppKeyAuth,
 
