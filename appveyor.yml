@@ -62,10 +62,5 @@ on_failure:
 
 on_success:
   - ps: |
-      if($isWindows){
-        . .\build.ps1 -task Deploy
-      }else{
-        sudo pwsh .\build.ps1 -task Deploy
-      }
-
+        Invoke-psake -buildFile psake.ps1 -taskList Deploy
 
