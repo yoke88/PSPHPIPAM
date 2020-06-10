@@ -60,4 +60,12 @@ on_failure:
     curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
 
 
+on_success:
+  - ps: |
+      if($isWindows){
+        . .\build.ps1 -task Deploy
+      }else{
+        sudo pwsh .\build.ps1 -task Deploy
+      }
+
 
