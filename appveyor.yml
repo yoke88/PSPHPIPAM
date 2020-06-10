@@ -62,6 +62,5 @@ on_failure:
 
 on_success:
   - ps: |
-        Set-BuildEnvironment
         Invoke-psake -buildFile psake.ps1 -taskList Deploy
 
