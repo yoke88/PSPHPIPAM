@@ -153,7 +153,7 @@ function New-PhpIpamSession {
 
     if ($useAppKeyAuth) {
         # useAppKeyAuth=encrypted request
-        $request_json = @{'controller' = 'sections' } | ConvertTo-Json -Compress
+        $request_json = @{'controller' = 'sections' } | ConvertTo-Json -Compress -Depth 100
         $enc_request = Protect-Rijndael256ECB -Key $AppKey -Plaintext $request_json
         $Encode_Crypt_request = [System.Web.HttpUtility]::UrlEncode($enc_request)
         $uri = "{0}/?app_id={1}&enc_request={2}" -f $PhpIpamApiUrl, $AppID, $Encode_Crypt_request

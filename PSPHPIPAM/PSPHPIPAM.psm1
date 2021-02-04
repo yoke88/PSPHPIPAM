@@ -28,4 +28,8 @@ if (test-path $FunctionFolder) {
 }
 
 disable-CertsCheck
+
+# make convertto-json depth to max 100 defaults
+
+$Script:PSDefaultParameterValues['convertto-json:Depth'] = 100
 #endregion

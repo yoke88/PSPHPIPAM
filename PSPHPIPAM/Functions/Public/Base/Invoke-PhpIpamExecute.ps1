@@ -128,8 +128,8 @@ function Invoke-PhpIpamExecute {
                 $query_hash = @{ } + $params
             }
             $query_hash.Add("controller", $controller)
-            $json_request = $query_hash | ConvertTo-Json -Compress
-            Write-Verbose "json_request: $(convertto-json $json_request)"
+            $json_request = $query_hash | ConvertTo-Json -Compress -Depth 100
+            Write-Verbose "json_request: $(convertto-json $json_request -depth 100)"
             $crypt_request = Protect-Rijndael256ECB -Key $script:PhpipamAppKey -Plaintext $json_request
             $Encode_Crypt_request = [System.Web.HttpUtility]::UrlEncode($crypt_request)
 
@@ -145,13 +145,13 @@ function Invoke-PhpIpamExecute {
 
     try {
         write-debug "$method uri=$uri"
-        write-debug "headers=$($headers|convertto-json)"
-        write-debug "contentType=$($contenttype|ConvertTo-Json)"
-        write-debug "body=$($params|convertto-json)"
+        write-debug "headers=$($headers|convertto-json -Depth 100)"
+        write-debug "contentType=$($contenttype|ConvertTo-Json -Depth 100)"
+        write-debug "body=$($params|convertto-json -Depth 100)"
 
         $r = Invoke-RestMethod -Method $method -Headers $headers  -Uri $uri -body $params -ContentType $ContentType
         if ($r -and $r -is [System.Management.Automation.PSCustomObject]) {
-            write-debug "Func Return:`r`n$($r|convertto-json)"
+            write-debug "Func Return:`r`n$($r|convertto-json -Depth 100)"
             return $r
         } else {
             # to process unvliad json output like this
@@ -161,7 +161,7 @@ function Invoke-PhpIpamExecute {
                 if ($objmatch.Success) {
                     try {
                         $r = ConvertFrom-Json -InputObject $objmatch.Groups[1].Value -ErrorAction Stop
-                        write-debug "Func Return:`r`n$($r|convertto-json)"
+                        write-debug "Func Return:`r`n$($r|convertto-json -Depth 100)"
                         return $r
                     } catch {
                         throw $("Can not parse the output [" + $r + ']')
@@ -177,7 +177,7 @@ function Invoke-PhpIpamExecute {
             # {"code":404,"success":0,"message":"Section does not exist","time":0.0050000000000000001}
             $message=$_.ErrorDetails.message|ConvertFrom-Json -ErrorAction SilentlyContinue
             if($message){
-                Write-Debug "Func Return:`r`n$($message|convertto-json)"
+                Write-Debug "Func Return:`r`n$($message|convertto-json -Depth 100)"
                 return $message
             }
 

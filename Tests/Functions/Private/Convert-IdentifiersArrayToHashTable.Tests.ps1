@@ -9,7 +9,7 @@ $ModuleFileFolder=$here -replace [regex]::Escape("$($sep)Tests$($sep)"),"$($sep)
 Describe "Convert-IdentifiersArrayToHashTable" {
     It "Convert-IdentifiersArrayToHashTable function test" {
         $h=Convert-IdentifiersArrayToHashTable -Identifiers @('subnets',1)
-        ($h|convertto-json)|Should -be (@{id='subnets';id2=1}|ConvertTo-Json)
+        ($h|convertto-json)|Should -be (@{id='subnets';id2=1}|ConvertTo-Json -depth 100)
         $h |should -BeOfType [Hashtable]
     }
 }
