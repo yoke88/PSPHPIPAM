@@ -19,7 +19,15 @@ function Update-PhpIpamAddress{
     [cmdletBinding()]
     Param(
          [parameter(Mandatory=$true,ValueFromPipeline=$true,ValueFromPipelineByPropertyName=$true,Position=1)]
-         [ValidateScript({$_.ContainsKey("id") -and $_.id})]
+         [ValidateScript({ 
+            if($_ -is [hashtable]){ 
+                if($_.ContainsKey("id")){
+                $True}
+            }elseif($_ -is [psCustomObject]){
+                 if($_.id){
+                 $True}}
+             else{Throw "$_ contains no valid ID"}
+            })]
          $params
     )
 
@@ -29,7 +37,7 @@ function Update-PhpIpamAddress{
     process{
         $r=Invoke-PhpIpamExecute -method patch -controller addresses -identifiers @($params.id) -params $params
         if($r -and $r.success){
-            Get-PhpIpamAddress -ID $params.id
+         return Get-PhpIpamAddress -ID $params.id
         }
     }
 
