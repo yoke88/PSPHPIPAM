@@ -26,9 +26,8 @@ function Get-PhpIpamAddresses{
             }
 
             if($ALL){
-                Get-PhpIpamSubnets|ForEach-Object{
-                    Get-PhpIpamSubnetAddressesByID -id $_.id
-                }
+                $r=Invoke-PhpIpamExecute -method get -controller addresses
+                Resolve-PhpIpamExecuteResult -result $r
             }
     }
 
