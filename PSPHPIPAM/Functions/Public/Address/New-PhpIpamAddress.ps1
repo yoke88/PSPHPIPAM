@@ -29,7 +29,7 @@ function New-PhpIpamAddress{
     process{
           $r=Invoke-PhpIpamExecute -method post -controller addresses  -params $params
           if($r -and $r.success){
-            Get-PhpIpamAddress -ID $r.id
+          return  Get-PhpIpamAddress -ID $r.id
           }else{
             Write-Error $r
           }
