@@ -3,7 +3,7 @@ function Get-PhpIpamSubnets{
     param(
         
     )
-    Get-PhpIpamSections|Get-PhpIpamSubnetsBySectionID
+    Invoke-PhpIpamExecute -method get -controller subnets
 }
 new-alias -Name Get-PhpIpamAllSubnets -Value Get-PhpIpamSubnets
 Export-ModuleMember -Function Get-PhpIpamSubnets -Alias Get-PhpIpamAllSubnets
