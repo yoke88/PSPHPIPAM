@@ -1,7 +1,7 @@
 environment:
   matrix:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-    - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu1804
+    - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2004
   GithubApiKey:
     secure: JUUgqhJzTG2vB53phwWr4gEKcvbA8AJCvSl5UIyFpH3cUprJgoqBmmOo9hJDMIDk
   NugetApiKey:
