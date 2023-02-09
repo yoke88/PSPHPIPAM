@@ -85,6 +85,10 @@ if you want to see raw network requests ,you can use below hacks to capture api 
    
    # we can see invoke-webrequest and invoke-restmethod will report simple 400 error and we can not see the error detail
    
+   # the root cause of 400 return code is because. ip property is not use when patch address object 
+   
+   # the phpipam API doc will prove this 
+   
 ```
 
 
