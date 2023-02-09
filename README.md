@@ -64,3 +64,28 @@ Debug like this
 ``` powershell
 New-PhpIpamSession -useCredAuth -PhpIpamApiUrl http://127.0.0.1/api -AppID script2 -userName admin -password password -debug
 ```
+
+if you want to see raw network requests ,you can use below hacks to capture api request and response using a proxy
+1. for example you have a proxy listening at http://127.0.0.1:8088
+``` powershell
+   import-module PSPHPIPAM
+   $module=Get-Module PSPHPIPAM
+   # execute custom hack code in the module env
+   # hack the default proxy value of invoke-restmethod command
+   $module.Invoke({$PSDefaultParameterValues['invoke-restmethod:proxy']='http://127.0.0.1:8088'})
+   # display $PSDefaultParameterValues in the module env
+   $module.Invoke({$PSDefaultParameterValues})
+   # test your code here
+   Update-PhpIpamAddress -params @{id=279;description="test3";ip="127.0.0.254"}
+   # the above code has not return and no error ,even using -debug param like below
+   Update-PhpIpamAddress -params @{id=279;description="test3";ip="127.0.0.254"} -debug
+   
+   # but the log in proxy can see the detail 
+   # {"code":400,"success":false,"message":"IP address cannot be changed","time":0.002}
+   
+   # we can see invoke-webrequest and invoke-restmethod will report simple 400 error and we can not see the error detail
+   
+```
+
+
+
